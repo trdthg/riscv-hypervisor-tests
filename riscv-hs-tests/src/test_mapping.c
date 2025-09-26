@@ -9,7 +9,7 @@
 #include "test_helpers.h"
 #include "utils.h"
 
-static void payload_ebreak()
+static void payload_ebreak(unsigned long arg0)
 {
 	asm volatile("ebreak");
 }
