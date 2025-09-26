@@ -122,12 +122,14 @@ class Emulator(ABC):
 
 
 class SailCSim(Emulator):
-    sim = Path("../sail-riscv/c_emulator/riscv_sim_RV64")
+    sim = Path("sail_riscv_sim")
     simflags = [
-        "--enable-pmp",
-        "--enable-dirty-update",
-        "--mtval-has-illegal-inst-bits",
-        "--xtinst-has-transformed-inst",
+        "--config",
+        "./rv64d_v128_e64.json",
+        # "--enable-pmp",
+        # "--enable-dirty-update",
+        # "--mtval-has-illegal-inst-bits",
+        # "--xtinst-has-transformed-inst",
     ]
     timeout = 5
 
