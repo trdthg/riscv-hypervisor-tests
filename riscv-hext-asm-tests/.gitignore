@@ -1,0 +1,17 @@
+# Compile targets
+*.elf
+*.o
+
+# Object dumps
+*.dump
+
+# Log files
+*.log
+
+# Coverage info
+sail_coverage
+*.cov
+*.html
+
+# Editor specific
+.vscode
