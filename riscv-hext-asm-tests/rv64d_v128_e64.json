@@ -34,7 +34,7 @@
       "allowed_within_exp": 0
     },
     "translation": {
-      "dirty_update": false
+      "dirty_update": true
     }
   },
   "platform": {

@@ -18,3 +18,13 @@ These unit tests are verified using the following H-extension capable emulators/
 ## Structure
 
 Actual tests are situated in `./tests/`. Environments & libraries common to multiple tests sit in `./common/`. Each test defines a `build.json` which indicates how the test should be build.
+
+## Config
+
+`at_S_39_update_pte_A` need this config:
+
+```json
+    "translation": {
+      "dirty_update": true
+    }
+```
