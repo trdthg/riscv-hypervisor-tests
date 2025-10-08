@@ -26,7 +26,7 @@ build-riscv-hext-asm-tests:
 	&& ./run_tests.py --build
 run-riscv-hext-asm-tests:
 	cd riscv-hext-asm-tests \
-	&& ./run_tests.py
+	&& ./run_tests.py --run
 clean-riscv-hext-asm-tests:
 	cd riscv-hext-asm-tests \
 	&& ./run_tests.py --clean
