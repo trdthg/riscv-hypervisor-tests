@@ -26,7 +26,7 @@ li TESTNUM, 1
 csrsi mstatus, MSTATUS_MIE | MSTATUS_SIE
 // Set mtimecmp to mtime + 2
 GET_MTIME(a0)
-addi a0, a0, 2 // Note: 1 timer tick corresponds with 100 instructions in Sail model
+addi a0, a0, 20 // Note: 1 timer tick corresponds with 100 instructions in Sail model
 SET_MTIMECMP(a0)
 // Enable and delegate timer-interrupts to HS
 li a0, MIP_MTIP | MIP_STIP
@@ -42,7 +42,7 @@ li t1, 2500 // Note: For optimization purposes, Spike only checks clint every 50
 loop:
   addi t0, t0, 1
   blt t0, t1, loop
-// Interrupt was not triggered
+// machine timer interrupt was not triggered
 j fail
 
 mtvec_handler:
