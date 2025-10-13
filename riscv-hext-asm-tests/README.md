@@ -28,3 +28,8 @@ Actual tests are situated in `./tests/`. Environments & libraries common to mult
       "dirty_update": true
     }
 ```
+
+## debug
+
+1. check exit code, which came from `li TESTNUM n`
+2. add `j pass`
