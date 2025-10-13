@@ -27,7 +27,7 @@ li TESTNUM, 1
 csrsi mstatus, MSTATUS_MIE | MSTATUS_SIE
 // Set mtimecmp to mtime + 2
 GET_MTIME(a0)
-addi a0, a0, 2 // Note: 1 timer tick corresponds with 100 instructions in Sail model
+addi a0, a0, 20 // Note: 1 timer tick corresponds with 100 instructions in Sail model
 SET_MTIMECMP(a0)
 // Enable and delegate timer-interrupts to VS
 li a0, MIP_MTIP | MIP_VSTIP
