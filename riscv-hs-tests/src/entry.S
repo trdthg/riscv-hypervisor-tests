@@ -22,7 +22,7 @@ _start:
 
     # Fix test_illegal
     # deleg to HS mode, _asm_trap_handler
-    li t0, 1 << CAUSE_ILLEGAL_INSTRUCTION
+    li t0, 1 << CAUSE_ILLEGAL_INSTRUCTION | 1 << CAUSE_BREAKPOINT | 1 << CAUSE_LOAD_PAGE_FAULT | 1 << CAUSE_LOAD_GUEST_PAGE_FAULT | 1 << CAUSE_MISALIGNED_LOAD | 1 << CAUSE_LOAD_ACCESS | 1 << CAUSE_MISALIGNED_STORE
     csrw medeleg, t0
 
 	la sp, _init_stack_end

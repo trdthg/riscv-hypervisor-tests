@@ -59,7 +59,7 @@ void test_mapping(void)
 
 	gen_task(&regs, STACK(stack1), payload_load, 0xff018);
 	run_task(&regs, &status, TASK_VS);
-	ASSERT(status.scause == CAUSE_LOAD_PAGE_FAULT,
+	ASSERT(status.scause == CAUSE_LOAD_GUEST_PAGE_FAULT,
 	       "scause == \"Load guest-page fault\"");
 	ASSERT(status.stval == 0xff018, "stval = 0xff018 (GVA of load)");
 	ASSERT(status.htval == 0, "htval = 0");
