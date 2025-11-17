@@ -251,7 +251,8 @@ static inline unsigned long sbi_mk_version(unsigned long major,
 
 int sbi_err_map_linux_errno(int err);
 
-static inline struct sbiret sbi_ecall(int ext, int fid, unsigned long arg0,
+
+static __attribute__((noinline))  struct sbiret sbi_ecall(int ext, int fid, unsigned long arg0,
 				      unsigned long arg1, unsigned long arg2,
 				      unsigned long arg3, unsigned long arg4,
 				      unsigned long arg5)
@@ -287,14 +288,18 @@ static inline long __sbi_base_ecall(int fid)
 		return 0;
 }
 
-static inline void sbi_console_putchar(int ch)
+extern void htif_putc(int c);
+static __attribute__((noinline)) void sbi_console_putchar(int ch)
 {
-	sbi_ecall(SBI_EXT_0_1_CONSOLE_PUTCHAR, 0, ch, 0, 0, 0, 0, 0);
+	// sbi_ecall(SBI_EXT_0_1_CONSOLE_PUTCHAR, 0, ch, 0, 0, 0, 0, 0);
+	htif_putc(ch);
 }
 
-__attribute__((noreturn)) static inline void sbi_shutdown(void)
+extern void htif_exit(int c);
+__attribute__((noreturn, noinline)) static void sbi_shutdown(uint32_t result)
 {
-	sbi_ecall(SBI_EXT_0_1_SHUTDOWN, 0, 0, 0, 0, 0, 0, 0);
+	// sbi_ecall(SBI_EXT_0_1_SHUTDOWN, 0, 0, 0, 0, 0, 0, 0);
+	htif_exit(result);
 	__builtin_unreachable();
 }
 

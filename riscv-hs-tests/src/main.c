@@ -19,5 +19,5 @@ void main(unsigned long /*hartid*/, void */*fdt*/)
 	}
 
 	printf("riscv-hs-tests out\n");
-	sbi_shutdown();
+	sbi_shutdown(0);
 }
