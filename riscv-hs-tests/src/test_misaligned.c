@@ -105,7 +105,7 @@ void test_misaligned(void)
 		misaligned_amo_okay = true;
 	} else {
 		LOG("Misaligned AMO failed");
-		ASSERT(status.scause == CAUSE_STORE_GUEST_PAGE_FAULT,
+		ASSERT(status.scause == CAUSE_MISALIGNED_STORE,
 		       "scause == \"Misaligned store/AMO\"");
 		ASSERT(status.stval == 0x1ff003,
 		       "stval = 0x1ff003 (GVA of AMO)");
@@ -129,7 +129,7 @@ void test_misaligned(void)
 		ASSERT(status.htval == 0 || status.htval == (0x200000 >> 2),
 		       "htval = One of { (0x200000 >> 2) (Faulting page GPA of AMO >> 2), 0 }");
 	} else {
-		ASSERT(status.scause == CAUSE_STORE_GUEST_PAGE_FAULT,
+		ASSERT(status.scause == CAUSE_MISALIGNED_STORE,
 		       "scause == \"Misaligned store/AMO\"");
 
 		ASSERT(status.stval == 0x1ffffd,

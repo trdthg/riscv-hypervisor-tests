@@ -9,7 +9,7 @@
 #include "test_helpers.h"
 #include "utils.h"
 
-static void payload(unsigned long arg0)
+static void payload(unsigned long /*arg0*/)
 {
 	asm volatile(".word 0xc0001073");
 }

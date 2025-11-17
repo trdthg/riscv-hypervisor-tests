@@ -8,7 +8,7 @@
 #include "riscv_encodings.h"
 #include "sbi.h"
 
-void main(unsigned long hartid, void *fdt)
+void main(unsigned long /*hartid*/, void */*fdt*/)
 {
 	init_task_trap();
 	reset_pt();
