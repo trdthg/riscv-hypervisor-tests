@@ -24,7 +24,7 @@ run-riscv-hyp-tests:
 # 	sail_riscv_sim --config ../rv64d_v128_e64.json ./build/sail/rvh_test.elf
 clean-riscv-hyp-tests:
 	cd riscv-hyp-tests \
-	&& PLAT=spike make clean
+	&& PLAT=sail make clean
 
 build-riscv-hext-asm-tests:
 	cd riscv-hext-asm-tests \

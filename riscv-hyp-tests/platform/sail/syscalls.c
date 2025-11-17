@@ -71,10 +71,10 @@ void setStats(int enable)
 #undef READ_CTR
 }
 
+extern void htif_exit(int c);
 void __attribute__((noreturn)) tohost_exit(uintptr_t code)
 {
-  tohost = (code << 1) | 1;
-  while (1);
+  htif_exit(code);
 }
 
 uintptr_t __attribute__((weak)) handle_trap(uintptr_t cause, uintptr_t epc, uintptr_t regs[32])
@@ -94,7 +94,8 @@ void abort()
 
 void printstr(const char* s)
 {
-  syscall(SYS_write, 1, (uintptr_t)s, strlen(s));
+  for (int i = 0; i < strlen(s); i++)
+    putchar(*(s+i));
 }
 
 int puts(const char* s)
@@ -118,21 +119,12 @@ int __attribute__((weak)) main(int argc, char** argv)
   return -1;
 }
 
+extern void htif_putc(int c);
 
 #undef putchar
 int putchar(int ch)
 {
-  static char buf[64] __attribute__((aligned(64)));
-  static int buflen = 0;
-
-  buf[buflen++] = ch;
-
-  if (ch == '\n' || buflen == sizeof(buf))
-  {
-    syscall(SYS_write, 1, (uintptr_t)buf, buflen);
-    buflen = 0;
-  }
-
+  htif_putc(ch);
   return 0;
 }
 
