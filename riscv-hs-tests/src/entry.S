@@ -20,6 +20,11 @@ _start:
     la t0, trap_handler
     csrw mtvec, t0
 
+    # Fix test_illegal
+    # deleg to HS mode, _asm_trap_handler
+    li t0, 1 << CAUSE_ILLEGAL_INSTRUCTION
+    csrw medeleg, t0
+
 	la sp, _init_stack_end
 
 	la a2, _hang
