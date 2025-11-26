@@ -7,6 +7,7 @@
 #define _TEST_HELPERS_H
 
 #include "printf.h"
+#include "sbi.h"
 
 /**
  * Log a message, including the current function name. Message with a newline.
@@ -25,8 +26,10 @@
 	do {                                                         \
 		if (check)                                           \
 			printf("[  OK  ] " msg "\n", ##__VA_ARGS__); \
-		else                                                 \
+		else  { \
 			printf("[ FAIL ] " msg "\n", ##__VA_ARGS__); \
+			sbi_shutdown(1);\
+		}                                               \
 	} while (0)
 
 #endif

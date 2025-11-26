@@ -8,13 +8,14 @@
 #include "riscv_encodings.h"
 #include "test_helpers.h"
 #include "utils.h"
+#include "sbi.h"
 
-static void payload_ebreak(unsigned long /*arg0*/)
+__attribute__ ((__noinline__)) static void payload_ebreak(unsigned long /*arg0*/)
 {
 	asm volatile("ebreak");
 }
 
-static void payload_load(unsigned long arg0)
+__attribute__ ((__noinline__)) static void payload_load(unsigned long arg0)
 {
 	register unsigned long res asm("a0") = *((unsigned long *)arg0);
 	asm volatile("ebreak" ::"r"(res) :);
@@ -55,14 +56,21 @@ void test_mapping(void)
 
 	*((unsigned long *)(playground + 0x18)) = 0xabcdef;
 
-	LOG("Testing load, hgatp and vsatp both missing");
+	#define PTE_G_ADDR 0x8021C080
+	*((pte_t *)PTE_G_ADDR) = 0x0;
+	LOG("Cleared G-Stage PTE at 0x%lx", PTE_G_ADDR);
 
-	gen_task(&regs, STACK(stack1), payload_load, 0xff018);
+	LOG("Testing load, hgatp and vsatp both missing");
+	gen_task(&regs, STACK(stack1), payload_load, 0x80210018);
 	run_task(&regs, &status, TASK_VS);
+
+	LOG("`status.scause = %lx", status.scause);
+	LOG("`status.htval: %lx", status.htval);
+
 	ASSERT(status.scause == CAUSE_LOAD_GUEST_PAGE_FAULT,
 	       "scause == \"Load guest-page fault\"");
-	ASSERT(status.stval == 0xff018, "stval = 0xff018 (GVA of load)");
-	ASSERT(status.htval == 0, "htval = 0");
+	ASSERT(status.stval == 0x80210018, "stval = 0x80210018 (GVA of load)");
+	ASSERT(status.htval == (0x80210018 >> 2), "htval = 0x8021C080 >> 2");
 
 	LOG("Testing load, hgatp missing, vsatp mapped");
 

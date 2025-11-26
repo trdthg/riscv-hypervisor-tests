@@ -296,7 +296,7 @@ static __attribute__((noinline)) void sbi_console_putchar(int ch)
 }
 
 extern void htif_exit(int c);
-__attribute__((noreturn, noinline)) static void sbi_shutdown(uint32_t result)
+static __attribute__((noreturn, noinline)) void sbi_shutdown(uint32_t result)
 {
 	// sbi_ecall(SBI_EXT_0_1_SHUTDOWN, 0, 0, 0, 0, 0, 0, 0);
 	htif_exit(result);

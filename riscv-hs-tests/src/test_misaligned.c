@@ -8,6 +8,7 @@
 #include "riscv_encodings.h"
 #include "test_helpers.h"
 #include "utils.h"
+#include "sbi.h"
 
 #include <stdbool.h>
 
@@ -47,14 +48,14 @@ void test_misaligned(void)
 	LOG("Testing with misaligned load");
 
 	init_gpt();
-	map_gpt(0x1ff000, (unsigned long)playground,
+	map_gpt(0x802ff000, (unsigned long)playground,
 		PTE_V | PTE_R | PTE_W | PTE_X | PTE_U | PTE_A | PTE_D);
 
 	unsigned long data = 0x12344321abcddcbaUL;
 
 	memcpy((char *)(playground + 3), (char *)&data, sizeof(data));
 
-	gen_task(&regs, STACK(stack1), payload_load, 0x1ff003);
+	gen_task(&regs, STACK(stack1), payload_load, 0x802ff003);
 	run_task(&regs, &status, TASK_VS);
 
 	if (status.scause == CAUSE_BREAKPOINT) {
@@ -74,16 +75,26 @@ void test_misaligned(void)
 	hstatus &= ~HSTATUS_GVA;
 	csr_write(hstatus, hstatus);
 
-	gen_task(&regs, STACK(stack1), payload_load, 0x1ffffd);
+	init_vspt();
+
+	#define PTE_G_ADDR 0x000000008021C080
+	*((pte_t *)PTE_G_ADDR) = 0x0;
+	LOG("Cleared G-Stage PTE at 0x%lx", PTE_G_ADDR);
+
+	gen_task(&regs, STACK(stack1), payload_load, 0x8021000d);
 	run_task(&regs, &status, TASK_VS);
+
+	printf("`status.scause == %lx\n", status.scause);
+	printf("`status.stval == %lx\n", status.stval);
+	printf("`status.htval == %lx\n", status.htval);
 
 	if (misaligned_load_okay) {
 		ASSERT(status.scause == CAUSE_LOAD_GUEST_PAGE_FAULT,
 		       "scause == \"Load guest-page fault\"");
 
-		ASSERT(status.stval == 0x200000,
+		ASSERT(status.stval == 0x8021000d,
 		       "stval = 0x200000 (Faulting page GVA of load)");
-		ASSERT(status.htval == 0 || status.htval == (0x200000 >> 2),
+		ASSERT(status.htval == 0 || status.htval == (0x8021000d >> 2),
 		       "htval = One of { (0x200000 >> 2) (Faulting page GPA of load >> 2), 0 }");
 	} else {
 		ASSERT(status.scause == CAUSE_MISALIGNED_LOAD,
@@ -94,10 +105,9 @@ void test_misaligned(void)
 	}
 
 	ASSERT(FIELD(status.hstatus, HSTATUS_GVA) == 1, "hstatus.GVA = 1");
-
 	LOG("Testing with misaligned AMO");
 
-	gen_task(&regs, STACK(stack1), payload_amo, 0x1ff003);
+	gen_task(&regs, STACK(stack1), payload_amo, 0x80210003);
 	run_task(&regs, &status, TASK_VS);
 
 	if (status.scause == CAUSE_BREAKPOINT) {
@@ -107,7 +117,7 @@ void test_misaligned(void)
 		LOG("Misaligned AMO failed");
 		ASSERT(status.scause == CAUSE_MISALIGNED_STORE,
 		       "scause == \"Misaligned store/AMO\"");
-		ASSERT(status.stval == 0x1ff003,
+		ASSERT(status.stval == 0x80210003,
 		       "stval = 0x1ff003 (GVA of AMO)");
 	}
 
@@ -117,8 +127,16 @@ void test_misaligned(void)
 	hstatus &= ~HSTATUS_GVA;
 	csr_write(hstatus, hstatus);
 
-	gen_task(&regs, STACK(stack1), payload_amo, 0x1ffffd);
+	#define PTE_G_ADDR 0x000000008021C080
+	*((pte_t *)PTE_G_ADDR) = 0x0;
+	LOG("Cleared G-Stage PTE at 0x%lx", PTE_G_ADDR);
+
+	gen_task(&regs, STACK(stack1), payload_amo, 0x8010000d);
 	run_task(&regs, &status, TASK_VS);
+
+	printf("`status.scause == %lx\n", status.scause);
+	printf("`status.stval == %lx\n", status.stval);
+	printf("`status.htval == %lx\n", status.htval);
 
 	if (misaligned_amo_okay) {
 		ASSERT(status.scause == CAUSE_STORE_GUEST_PAGE_FAULT,
@@ -132,7 +150,7 @@ void test_misaligned(void)
 		ASSERT(status.scause == CAUSE_MISALIGNED_STORE,
 		       "scause == \"Misaligned store/AMO\"");
 
-		ASSERT(status.stval == 0x1ffffd,
+		ASSERT(status.stval == 0x8010000d,
 		       "stval = 0x1ffffd (GVA of AMO)");
 	}
 
