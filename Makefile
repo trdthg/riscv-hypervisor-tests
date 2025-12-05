@@ -7,7 +7,7 @@ build-riscv-hs-tests:
 	&& make all
 run-riscv-hs-tests:
 	cd riscv-hs-tests \
-	&& sail_riscv_sim --config ../rv64d_v128_e64.json ./build/riscv-hs-tests.elf
+	&& sail_riscv_sim --config ../rv64d_v128_e64.json ./build/riscv-hs-tests.elf --trace-all --trace-output ./log/sail_trace.log
 clean-riscv-hs-tests:
 	cd riscv-hs-tests \
 	&& make clean
@@ -17,7 +17,7 @@ build-riscv-hyp-tests:
 	&& PLAT=sail LOG_LEVEL=LOG_INFO make
 run-riscv-hyp-tests:
 	cd riscv-hyp-tests \
-	&& sail_riscv_sim --config ../rv64d_v128_e64.json ./build/sail/rvh_test.elf
+	&& sail_riscv_sim --config ../rv64d_v128_e64.json ./build/sail/rvh_test.elf --trace-all --trace-output ./log/sail_trace.log
 clean-riscv-hyp-tests:
 	cd riscv-hyp-tests \
 	&& PLAT=sail make clean
