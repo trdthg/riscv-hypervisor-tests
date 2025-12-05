@@ -1,0 +1,9 @@
+[submodule "riscv-hext-asm-tests"]
+	path = riscv-hext-asm-tests
+	url = https://github.com/trdthg/riscv-hext-asm-tests.git
+[submodule "riscv-hs-tests"]
+	path = riscv-hs-tests
+	url = https://github.com/trdthg/riscv-hs-tests.git
+[submodule "riscv-hyp-tests"]
+	path = riscv-hyp-tests
+	url = https://github.com/trdthg/riscv-hyp-tests.git
